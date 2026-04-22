@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="opaowebservice.client/opaowebservice.client.esproj">
+    <Build />
+    <Deploy />
+  </Project>
+  <Project Path="OPAOWebService.Server/OPAOWebService.Server.csproj" />
+</Solution>
