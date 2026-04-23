@@ -20,7 +20,6 @@ builder.Configuration.AddEnvironmentVariables();
 // Register the connection provider as a Singleton or Scoped
 
 builder.Services.AddSingleton<IDatabaseConnection, DatabaseConnection>();
-
 builder.Services.AddScoped<ITaxService, TaxService>();
 builder.Services.AddScoped<ITaxRepository, TaxRepository>();
 
