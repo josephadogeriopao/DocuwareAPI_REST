@@ -40,9 +40,17 @@ namespace OPAOWebService.Server.Controllers
         {
             var value = _taxService.UpdatePropertyValuation(request);
 
+            IConfiguration configuration = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+            .AddEnvironmentVariables() // This maps the 'ConnectionStrings__OracleDbConnection'
+            .Build();
+            string? connectionString = configuration.GetConnectionString("OracleDbConnection");
+
+
             return new AssessmentStatusResponse
             {
-                StatusCode = 1, Message = "Success : " + value
+                StatusCode = 1, Message = "Success : " + value + connectionString
             };
         }
 
