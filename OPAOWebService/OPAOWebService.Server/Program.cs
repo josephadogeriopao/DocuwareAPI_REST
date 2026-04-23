@@ -1,6 +1,8 @@
 using Microsoft.OpenApi;
 using OPAOWebService.Server.Business;
 using OPAOWebService.Server.Business.Interfaces;
+using OPAOWebService.Server.Data.Providers;
+using OPAOWebService.Server.Data.Providers.Interfaces;
 using OPAOWebService.Server.Data.Repositories;
 using OPAOWebService.Server.Data.Repositories.Interfaces;
 using Swashbuckle.AspNetCore.SwaggerUI;
@@ -9,6 +11,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Dependency Injection
 // Add services to the container.
+// Register the connection provider as a Singleton or Scoped
+
+builder.Services.AddSingleton<IDatabaseConnection, DatabaseConnection>();
 builder.Services.AddScoped<ITaxService, TaxService>();
 builder.Services.AddScoped<ITaxRepository, TaxRepository>();
 
