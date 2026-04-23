@@ -1,4 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
+using OPAOWebService.Server.Business.Interfaces;
+using OPAOWebService.Server.Data.Repositories.Interfaces;
+using OPAOWebService.Server.Models.DTOs.Requests;
+using OPAOWebService.Server.Models.DTOs.Responses;
 
 namespace OPAOWebService.Server.Controllers
 {
@@ -6,6 +10,14 @@ namespace OPAOWebService.Server.Controllers
     [Route("[controller]")]
     public class TaxController : ControllerBase
     {
+        private readonly ITaxService _taxService;
+
+        public TaxController(ITaxService taxService)
+        {
+            _taxService = taxService;
+        }
+
+
         private static readonly string[] Summaries =
         [
             "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
@@ -22,5 +34,18 @@ namespace OPAOWebService.Server.Controllers
             })
             .ToArray();
         }
+
+        [HttpPost("AssessmentUpdateStatus", Name = "PostAssessmentUpdateStatus")]
+        public AssessmentStatusResponse PostAssessmentUpdateStatus([FromBody] AssessmentStatusRequest request)
+        {
+            var value = _taxService.UpdatePropertyValuation(request);
+
+            return new AssessmentStatusResponse
+            {
+                StatusCode = 1, Message = "Success : " + value
+            };
+        }
+
     }
+
 }
