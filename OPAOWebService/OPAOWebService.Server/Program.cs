@@ -1,4 +1,3 @@
-using Microsoft.Extensions.Options;
 using Microsoft.OpenApi;
 using OPAOWebService.Server.Business;
 using OPAOWebService.Server.Business.Interfaces;
@@ -45,6 +44,13 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 var app = builder.Build();
+
+// Load .env variables into the environment
+DotNetEnv.Env.Load();
+
+// Tell the configuration builder to look at environment variables
+// This is done by default in CreateBuilder, but reloading ensures .env values are picked up
+builder.Configuration.AddEnvironmentVariables();
 
 if (app.Environment.IsDevelopment())
 {
