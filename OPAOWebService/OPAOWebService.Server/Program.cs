@@ -11,8 +11,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Load .env into the system environment so IConfiguration can see them
 // This looks for the .env file in the actual project directory
-//DotNetEnv.Env.Load(Path.Combine(Directory.GetCurrentDirectory(), ".env"));
-DotNetEnv.Env.Load();
+var envPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ".env");
+DotNetEnv.Env.Load(envPath);
 builder.Configuration.AddEnvironmentVariables();
 
 // Dependency Injection
@@ -75,7 +75,6 @@ if (app.Environment.IsDevelopment())
         //options.EnableFilter();                  // Adds the search/filter bar
         options.DisplayRequestDuration();        // Shows timing for "Try it out"
     });
-
 }
 
 app.UseHttpsRedirection();
