@@ -29,4 +29,7 @@
     <PackageReference Include="System.ServiceModel.Security" Version="6.0.0" />
     <PackageReference Include="System.ServiceModel.Federation" Version="10.0.652802" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Infrastructure\Helpers\" />
+  </ItemGroup>
 </Project>

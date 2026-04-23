@@ -9,11 +9,18 @@ using Swashbuckle.AspNetCore.SwaggerUI;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Load .env into the system environment so IConfiguration can see them
+// This looks for the .env file in the actual project directory
+//DotNetEnv.Env.Load(Path.Combine(Directory.GetCurrentDirectory(), ".env"));
+DotNetEnv.Env.Load();
+builder.Configuration.AddEnvironmentVariables();
+
 // Dependency Injection
 // Add services to the container.
 // Register the connection provider as a Singleton or Scoped
 
 builder.Services.AddSingleton<IDatabaseConnection, DatabaseConnection>();
+
 builder.Services.AddScoped<ITaxService, TaxService>();
 builder.Services.AddScoped<ITaxRepository, TaxRepository>();
 
@@ -50,13 +57,6 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
-// Load .env variables into the environment
-DotNetEnv.Env.Load();
-
-// Tell the configuration builder to look at environment variables
-// This is done by default in CreateBuilder, but reloading ensures .env values are picked up
-builder.Configuration.AddEnvironmentVariables();
-
 if (app.Environment.IsDevelopment())
 {
     // 2. Enable the classic Swashbuckle JSON generator
@@ -82,3 +82,4 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
+

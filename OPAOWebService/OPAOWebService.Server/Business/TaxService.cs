@@ -15,7 +15,7 @@ namespace OPAOWebService.Server.Business
 
         public int UpdatePropertyValuation(AssessmentStatusRequest request)
         {
-            bool answer = _taxRepository.IsValidParcelId("parid",2026);
+            bool answer = _taxRepository.IsValidParcelId("5641-CHRISTIANLN",2026);
 
 
             return  answer ? 1 : 0;
