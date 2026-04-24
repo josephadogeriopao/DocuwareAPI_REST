@@ -1,4 +1,5 @@
 <Solution>
+  <Project Path="ConfigTool/ConfigTool.csproj" />
   <Project Path="opaowebservice.client/opaowebservice.client.esproj">
     <Build />
     <Deploy />
