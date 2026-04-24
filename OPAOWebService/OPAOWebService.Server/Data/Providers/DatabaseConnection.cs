@@ -4,18 +4,31 @@ using System.Diagnostics;
 
 namespace OPAOWebService.Server.Data.Providers
 {
+    /// <summary>
+    /// Implementation of IDatabaseConnection for Oracle using Managed Data Access.
+    /// Handles dynamic connection string construction from Web.config settings.
+    /// </summary>
+    /// <remarks>
+    /// <para><strong>Author:</strong> Joseph Adogeri</para>
+    /// <para><strong>Since:</strong> 24-APR-2026</para>
+    /// <para><strong>Version:</strong> 1.0.0</para>
+    /// <para><strong>File:</strong> DatabaseConnection.cs</para>
+    /// </remarks>
     public class DatabaseConnection : IDatabaseConnection
     {
         private readonly IConfiguration _configuration;
-
-        private readonly string _connectionString;
 
         public DatabaseConnection(IConfiguration configuration)
         {
             _configuration = configuration;
         }
 
-
+        /// <summary>
+        /// Retrieves the connection template and injects credentials from AppSettings.
+        /// </summary>
+        /// <returns>A fully formatted Oracle connection string.</returns>
+        /// <exception cref="Exception">Thrown if the 'OracleIAS' connection string is missing.</exception>
+        /// <exception cref="InvalidOperationException">Thrown if One or more required AppSettings are missing.</exception>
         public string GetConnectionString()
         {
             try
@@ -56,6 +69,11 @@ namespace OPAOWebService.Server.Data.Providers
             }
         }
 
+        /// <summary>
+        /// Instantiates a new OracleConnection using the generated connection string.
+        /// </summary>
+        /// <returns>An un-opened OracleConnection object.</returns>
+        /// <inheritdoc/>
         public OracleConnection CreateConnection()
         {
             return new OracleConnection(GetConnectionString());
