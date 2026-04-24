@@ -16,6 +16,7 @@
     </PackageReference>
     <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="23.26.200" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.7" />
+    <PackageReference Include="System.ServiceModel.Primitives" Version="10.0.652802" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\opaowebservice.client\opaowebservice.client.esproj">

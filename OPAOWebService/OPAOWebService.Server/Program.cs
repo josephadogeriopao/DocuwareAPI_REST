@@ -1,28 +1,26 @@
-using Microsoft.OpenApi;
-using OPAOWebService.Server.Business;
-using OPAOWebService.Server.Business.Interfaces;
-using OPAOWebService.Server.Data.Providers;
-using OPAOWebService.Server.Data.Providers.Interfaces;
-using OPAOWebService.Server.Data.Repositories;
-using OPAOWebService.Server.Data.Repositories.Interfaces;
+
+using OPAOWebService.Server.Infrastructure.Extensions;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// 1. Load Environment Variables
 // Load .env into the system environment so IConfiguration can see them
 // This looks for the .env file in the actual project directory
-var envPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ".env");
-DotNetEnv.Env.Load(envPath);
+//var envPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ".env");
+//DotNetEnv.Env.Load(envPath);
+DotNetEnv.Env.Load();
 builder.Configuration.AddEnvironmentVariables();
 
 // Dependency Injection
 // Add services to the container.
 // Register the connection provider as a Singleton or Scoped
 
-builder.Services.AddSingleton<IDatabaseConnection, DatabaseConnection>();
-builder.Services.AddScoped<ITaxService, TaxService>();
-builder.Services.AddScoped<ITaxRepository, TaxRepository>();
+// 2. Register Services via your Extensions
+builder.Services.AddProjectServices(); // Registers DB, TaxService, TaxRepo
+builder.Services.AddSwaggerDocumentation(); // Registers SwaggerGen
 
+// 3. Controllers and JSON Strictness
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
          {
@@ -31,31 +29,12 @@ builder.Services.AddControllers()
                  System.Text.Json.Serialization.JsonUnmappedMemberHandling.Disallow;
          });
 
-// 1. Register SwaggerGen (Swashbuckle) instead of AddOpenApi
+// Register SwaggerGen (Swashbuckle) instead of AddOpenApi
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options =>
-{
-    options.SwaggerDoc("v1", new OpenApiInfo
-    {
-        Title = "OPAOWebService API",
-        Version = "v1.0.0",
-        Description = "A comprehensive web service for OPAO operations, providing endpoints for data management and integration.",
-        Contact = new OpenApiContact
-        {
-            Name = "Joseph Adogeri",
-            Email = "support@opao.com",
-            Url = new Uri("https://opao.example.com")
-        },
-        License = new OpenApiLicense
-        {
-            Name = "Apache 2.0 (License)",
-            Url = new Uri("http://apache.org")
-        }
-    });
-});
 
 var app = builder.Build();
 
+// 4. Configure Middleware Pipeline
 if (app.Environment.IsDevelopment())
 {
     // 2. Enable the classic Swashbuckle JSON generator
@@ -74,6 +53,7 @@ if (app.Environment.IsDevelopment())
         //options.EnableFilter();                  // Adds the search/filter bar
         options.DisplayRequestDuration();        // Shows timing for "Try it out"
     });
+
 }
 
 app.UseHttpsRedirection();
