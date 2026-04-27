@@ -48,3 +48,6 @@ logs/
 
 # Environment-specific files
 *.env
+
+# Optional: If you keep your .env in the server or root folder
+*.txt
