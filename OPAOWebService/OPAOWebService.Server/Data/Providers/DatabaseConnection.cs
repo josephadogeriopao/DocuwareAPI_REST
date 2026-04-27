@@ -1,4 +1,6 @@
-﻿using OPAOWebService.Server.Data.Providers.Interfaces;
+﻿using Microsoft.AspNetCore.DataProtection;
+using OPAOWebService.Server.Data.Providers.Interfaces;
+using OPAOWebService.Server.Infrastructure.Security.Interfaces;
 using Oracle.ManagedDataAccess.Client;
 using System.Diagnostics;
 
@@ -17,10 +19,11 @@ namespace OPAOWebService.Server.Data.Providers
     public class DatabaseConnection : IDatabaseConnection
     {
         private readonly IConfiguration _configuration;
-
-        public DatabaseConnection(IConfiguration configuration)
+        private readonly IConfigProtector _configProtector;
+        public DatabaseConnection(IConfiguration configuration, IConfigProtector configProtector)
         {
             _configuration = configuration;
+            _configProtector = configProtector;
         }
 
         /// <summary>
@@ -39,25 +42,39 @@ namespace OPAOWebService.Server.Data.Providers
                     throw new Exception("Connection string template 'OracleDbConnection' is missing from config.");
 
                 // 2. Pull values (automatically checks .env/IIS first because of AddEnvironmentVariables)
-                string? host = _configuration["ORACLE_HOST"];
-                string? port = _configuration["ORACLE_PORT"] ?? "1521";
-                string? sid = _configuration["ORACLE_SID"];
-                string? user = _configuration["ORACLE_USERNAME"];
-                string? pass = _configuration["ORACLE_PASSWORD"];
+                // Directly decrypt as we pull from config
+                Debug.WriteLine("d raw template ==> " + rawTemplate);
+                Console.WriteLine("c raw template ==> " + rawTemplate);
+
+
+                Debug.WriteLine("encrypted host==> " + _configuration["ORACLE_HOST"]);
+                Console.WriteLine("encrypted host==> " + _configuration["ORACLE_HOST"]);
+                string host = _configProtector.Decrypt(_configuration["ORACLE_HOST"], "ORACLE_HOST");
+                string port = _configProtector.Decrypt(_configuration["ORACLE_PORT"], "ORACLE_PORT");
+                string sid = _configProtector.Decrypt(_configuration["ORACLE_SID"], "ORACLE_SID");
+                string user = _configProtector.Decrypt(_configuration["ORACLE_USERNAME"], "ORACLE_USERNAME");
+                string pass = _configProtector.Decrypt(_configuration["ORACLE_PASSWORD"], "ORACLE_PASSWORD");
+
+                Debug.WriteLine("decrypted host==> " + host);
+                Console.WriteLine("decrypted host==> " + host);
+
+                Debug.WriteLine(" oracle string done ==> " + string.Format(rawTemplate, host, port, sid, user, pass));
+                Console.WriteLine("oracle string done ==> " + string.Format(rawTemplate, host, port, sid, user, pass));
+
+
+
 
                 // 3. SECURE CHECK: Ensure we didn't get "placeholder" or null
                 var fields = new Dictionary<string, string?>
                 {
                     {"HOST", host}, {"SID", sid}, {"USER", user}, {"PASS", pass}
                 };
+                Console.WriteLine("fields ==> " + fields.ToString());
+                Debug.WriteLine("fields ==> " + fields.ToString());
 
-                foreach (var field in fields)
-                {
-                    if (string.IsNullOrEmpty(field.Value) || field.Value.Equals("placeholder", StringComparison.OrdinalIgnoreCase))
-                    {
-                        throw new InvalidOperationException($"Database Setting '{field.Key}' is missing or still set to 'placeholder'. Check your .env file or IIS settings.");
-                    }
-                }
+                
+
+                ValidateFields(fields);
 
                 // 4. Return the formatted string
                 return string.Format(rawTemplate, host, port, sid, user, pass);
@@ -76,7 +93,25 @@ namespace OPAOWebService.Server.Data.Providers
         /// <inheritdoc/>
         public OracleConnection CreateConnection()
         {
+            OracleConnection.ClearPool(new OracleConnection(GetConnectionString()));
+
             return new OracleConnection(GetConnectionString());
+        }
+
+        /// <summary>
+        /// Validates that the provided configuration values are not null, empty, or set to "placeholder".
+        /// </summary>
+        /// <param name="fieldss">A collection of string values to validate.</param>
+        /// <exception cref="Exception">Thrown when a value is missing or contains default placeholder text.</exception>
+        private void ValidateFields(Dictionary<string, string?> fields)
+        {
+            foreach (var field in fields)
+            {
+                if (string.IsNullOrEmpty(field.Value) || field.Value.Equals("placeholder", StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new InvalidOperationException($"Database Setting '{field.Key}' is missing or still set to 'placeholder'. Check your .env file or IIS settings.");
+                }
+            }
         }
     }
 }

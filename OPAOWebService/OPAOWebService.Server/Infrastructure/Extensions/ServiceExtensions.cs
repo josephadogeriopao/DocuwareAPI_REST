@@ -5,6 +5,8 @@ using OPAOWebService.Server.Data.Providers;
 using OPAOWebService.Server.Data.Providers.Interfaces;
 using OPAOWebService.Server.Data.Repositories;
 using OPAOWebService.Server.Data.Repositories.Interfaces;
+using OPAOWebService.Server.Infrastructure.Security;
+using OPAOWebService.Server.Infrastructure.Security.Interfaces;
 
 namespace OPAOWebService.Server.Infrastructure.Extensions
 {
@@ -12,6 +14,9 @@ namespace OPAOWebService.Server.Infrastructure.Extensions
     {
         public static IServiceCollection AddProjectServices(this IServiceCollection services)
         {
+            // Data Protection Decryption
+            services.AddSingleton<IConfigProtector, ConfigProtector>();
+
             // Database Connection
             services.AddSingleton<IDatabaseConnection, DatabaseConnection>();
 

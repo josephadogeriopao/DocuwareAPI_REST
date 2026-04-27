@@ -1,16 +1,30 @@
 
+using Microsoft.AspNetCore.DataProtection;
 using OPAOWebService.Server.Infrastructure.Extensions;
 using Swashbuckle.AspNetCore.SwaggerUI;
+using System.IO;
+
+// Create a specific folder for keys (e.g., in your user profile)
+var keyPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "OPAO-Keys");
+
+// Ensure the directory exists
+if (!Directory.Exists(keyPath)) Directory.CreateDirectory(keyPath);
+
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Load Environment Variables
+// 0. Load Environment Variables
 // Load .env into the system environment so IConfiguration can see them
 // This looks for the .env file in the actual project directory
 //var envPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ".env");
 //DotNetEnv.Env.Load(envPath);
 DotNetEnv.Env.Load();
 builder.Configuration.AddEnvironmentVariables();
+
+// 1. Data Protection - Secure Sensitive Data
+builder.Services.AddDataProtection()
+    .SetApplicationName("OPAOWebService")
+    .PersistKeysToFileSystem(new DirectoryInfo(keyPath)); // Force both to use this folder; 
 
 // Dependency Injection
 // Add services to the container.
