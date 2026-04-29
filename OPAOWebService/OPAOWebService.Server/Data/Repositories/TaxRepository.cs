@@ -26,6 +26,8 @@ namespace OPAOWebService.Server.Data.Repositories
             _databaseConnection = databaseConnection;
         }
 
+        public TaxRepository() { }
+
         /// <summary>
         /// Queries the database to retrieve the active tax year from the AASYSJUR table.
         /// </summary>
@@ -79,6 +81,9 @@ namespace OPAOWebService.Server.Data.Repositories
                     conn.Open();
                     string sqlQuery = SqlCommands.IsValidParcelId;
                     Debug.WriteLine("sql query is valid parid : " + sqlQuery);
+                    Debug.WriteLine($"parameters ==> parid: {parcelId}, taxyear: {taxYear}");
+                    Console.WriteLine($"parameters ==> parid: {parcelId}, taxyear: {taxYear}");
+
 
                     using (var cmd = new OracleCommand(sqlQuery, conn))
                     {
@@ -86,8 +91,17 @@ namespace OPAOWebService.Server.Data.Repositories
                         cmd.Parameters.Add(new OracleParameter("parid", parcelId));
                         cmd.Parameters.Add(new OracleParameter("taxyr", taxYear));
 
+                        Debug.WriteLine("sql command: " + cmd.CommandText);
+                        Console.WriteLine("sql command: " + cmd.CommandText);
+
+
+
+                        // Paste this in the Immediate Window
+                        foreach (OracleParameter p in cmd.Parameters) { Debug.WriteLine($"{p.ParameterName}: {p.Value}"); }
+
+
                         var result = cmd.ExecuteScalar()?.ToString();
-                        return result == "true";
+                        return result?.Trim().ToLower() == "true";
                     }
                 }
                 catch (OracleException ex)

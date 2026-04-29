@@ -1,5 +1,6 @@
 ﻿using IasworldTransactionService;
 using OPAOWebService.Server.Factories.Interfaces;
+using OPAOWebService.Server.Infrastructure.Security.Interfaces;
 using System.Diagnostics;
 
 namespace OPAOWebService.Server.Factories
@@ -18,11 +19,17 @@ namespace OPAOWebService.Server.Factories
     {
 
         private readonly IConfiguration _configuration;
+        private readonly IConfigProtector _configProtector;
+
+
+        public TransactionGetRequestFactory() { }
 
         // Traditional constructor injection
-        public TransactionGetRequestFactory(IConfiguration configuration)
+        public TransactionGetRequestFactory(IConfiguration configuration, IConfigProtector configProtector)
         {
             _configuration = configuration;
+            _configProtector = configProtector;
+
         }
         /// <summary>
         /// Creates and populates a new TransactionGetRequest for a specific parcel and tax year.
@@ -32,13 +39,14 @@ namespace OPAOWebService.Server.Factories
         /// <returns>A fully initialized <see cref="TransactionGetRequest"/> object.</returns>
         public TransactionGetRequest Create(string parcelId, int taxYear)
         {
-            Debug.WriteLine("values to create new object " + parcelId + " , " + taxYear);
+            string transactionName = _configProtector.Decrypt(_configuration["IAS_TRANS_NAME"], "IAS_TRANS_NAME") ?? "DefaultValue";
+            string jurisdiction = _configProtector.Decrypt(_configuration["IAS_JUR"], "IAS_JUR") ?? "DefaultValue";
 
             TransactionGetRequest req = new TransactionGetRequest
             {
                 TaxYear = taxYear,
-                Jurisdiction = "9",
-                TransactionName = _configuration["TRANS_NAME"]?.ToString() ?? "DefaultValue",
+                Jurisdiction = jurisdiction,
+                TransactionName = transactionName,
                 IncludeDeactivatedRecords = true,
                 IncludeHistoryRecords = false,
                 SubjectId = parcelId

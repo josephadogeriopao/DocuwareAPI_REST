@@ -35,8 +35,8 @@
                     WHERE A.parid = :parid 
                     AND A.taxyr = :taxyr 
                     AND A.cur = 'Y'
-                ) THEN 'Y' 
-                ELSE 'N' 
+                ) THEN 'true' 
+                ELSE 'false' 
             END 
         FROM DUAL
         """;

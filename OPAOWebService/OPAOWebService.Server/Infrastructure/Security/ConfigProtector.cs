@@ -28,6 +28,8 @@ namespace OPAOWebService.Server.Infrastructure.Security
             _protector = provider.CreateProtector("OPAODataProtectionEncryption");
         }
 
+        public ConfigProtector() { }
+
         /// <summary>
         /// Decrypts a protected configuration value and validates that it is not a placeholder.
         /// </summary>

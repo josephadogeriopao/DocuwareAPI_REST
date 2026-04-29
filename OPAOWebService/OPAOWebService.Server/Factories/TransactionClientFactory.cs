@@ -1,59 +1,70 @@
 ﻿using IasworldTransactionService;
 using OPAOWebService.Server.Factories.Interfaces;
 using OPAOWebService.Server.Infrastructure.Security;
+using OPAOWebService.Server.Infrastructure.Security.Interfaces;
+using OPAOWebService.Server.Infrastructure.Validation;
+using System.Configuration;
 using System.Diagnostics;
+using System.Linq; 
+using System.ServiceModel;
 
 namespace OPAOWebService.Server.Factories
 {
-    /// <summary>
-    /// Factory class responsible for instantiating and configuring the iasWorld TransactionClient.
-    /// It specifically handles the injection of custom SOAP security credentials.
-    /// </summary>
-    /// <remarks>
-    /// <para><strong>Author:</strong> Joseph Adogeri</para>
-    /// <para><strong>Since:</strong> 23-APR-2026</para>
-    /// <para><strong>Version:</strong> 1.0.0</para>
-    /// <para><strong>File:</strong> TransactionClientFactory.cs</para>
-    /// </remarks>
     public class TransactionClientFactory : ITransactionClientFactory
     {
-        /// <summary>
-        /// Creates a TransactionClient and replaces standard credentials with <see cref="CustomCredentials"/>.
-        /// </summary>
-        /// <param name="username">The service account username.</param>
-        /// <param name="password">The service account password.</param>
-        /// <returns>A configured <see cref="TransactionClient"/>.</returns>
-        /// <exception cref="ArgumentException">Thrown if credentials are missing.</exception>
-        /// <exception cref="InvalidOperationException">Thrown if the endpoint configuration is missing in Web.config.</exception>
+        private readonly ITransactionBindingProvider _bindingProvider;
+        private readonly IConfiguration _configuration;
+        private readonly IConfigProtector _configProtector;
+
+        public TransactionClientFactory() { }
+
+        public TransactionClientFactory(ITransactionBindingProvider bindingProvider, IConfiguration configuration, IConfigProtector configProtector)
+        {
+            _bindingProvider = bindingProvider;
+            _configuration = configuration;
+            _configProtector = configProtector;
+        }
+
         public TransactionClient Create(string username, string password)
         {
-            // 1. Check for Argument Errors first
             if (string.IsNullOrWhiteSpace(username)) throw new ArgumentException("Username cannot be null or empty.", nameof(username));
             if (string.IsNullOrWhiteSpace(password)) throw new ArgumentException("Password cannot be null or empty.", nameof(password));
+
             try
             {
-                //IasworldTransactionService.TransactionClient transactionClient = new IasworldTransactionService.TransactionClient("WSHttpBinding_ITransaction");
-                //Debug.WriteLine("transaction client in factory", transactionClient, transactionClient.ToString());
-                ////transactionClient.ChannelFactory.Endpoint.Behaviors.Remove<System.ServiceModel.Description.ClientCredentials>();
-                ////CustomCredentials customCredentials = new CustomCredentials(username, password);
-                ////transactionClient.ChannelFactory.Endpoint.Behaviors.Add(customCredentials);
-                //return transactionClient;
-                var client = new TransactionClient(TransactionClient.EndpointConfiguration.WSHttpBinding_ITransaction);
+                // In ASP.NET Core, we must use the programmatic URL
+                string serviceUrl = _configProtector.Decrypt(_configuration["IAS_ENDPOINT_ADDRESS"], "IAS_ENDPOINT_ADDRESS");
 
-                // 2. Add the custom behavior that injects your specific XML security header
-                client.Endpoint.EndpointBehaviors.Add(new SecurityBehavior(username, password));
+                var field = new Dictionary<string, string?>
+                {
+                    {"IAS_ENDPOINT_ADDRESS", serviceUrl}
+                };
+
+                ConfigurationValidator.ValidateFields(field);
+
+                // 1. Define Binding (Matches your old WSHttpBinding_ITransaction)
+                var binding = _bindingProvider.GetBinding();
+                // 2. Define Endpoint Address
+                var endpointAddress = new EndpointAddress(serviceUrl);
+
+                // 3. Initialize Client using the objects, not a config name string
+                var client = new TransactionClient(binding, endpointAddress);
+
+                // 4. Set the standard credentials for good measure
+                client.ClientCredentials.UserName.UserName = username;
+                client.ClientCredentials.UserName.Password = password;
+
+                Debug.WriteLine($"The .svc address is: {client.Endpoint.Address.Uri}");
+                Console.WriteLine($"The .svc address is: {client.Endpoint.Address.Uri}");
 
                 return client;
             }
-            // 2. Catch Configuration Errors (e.g., endpoint name is wrong in web.config)
-            catch (InvalidOperationException ex)
+            catch (Exception ex)
             {
-                throw new InvalidOperationException("Could not find the endpoint 'WSHttpBinding_ITransaction' in the configuration file.", ex);
-            }
-            // 3. Catch generic WCF setup errors
-            catch (System.ServiceModel.CommunicationException ex)
-            {
-                throw new Exception("WCF communication channel could not be initialized.", ex);
+                // We catch general exceptions because programmatic config failures 
+                // are usually ArgumentExceptions or InvalidOperationExceptions.
+                System.Diagnostics.Debug.WriteLine($"exception in transation client factory : Details: {ex.InnerException.Message}");
+                throw new Exception($"Failed to initialize IasWorld Transaction Client: {ex.Message}", ex);
             }
         }
     }

@@ -5,6 +5,8 @@ using OPAOWebService.Server.Data.Providers;
 using OPAOWebService.Server.Data.Providers.Interfaces;
 using OPAOWebService.Server.Data.Repositories;
 using OPAOWebService.Server.Data.Repositories.Interfaces;
+using OPAOWebService.Server.Factories;
+using OPAOWebService.Server.Factories.Interfaces;
 using OPAOWebService.Server.Infrastructure.Security;
 using OPAOWebService.Server.Infrastructure.Security.Interfaces;
 
@@ -19,6 +21,10 @@ namespace OPAOWebService.Server.Infrastructure.Extensions
 
             // Database Connection
             services.AddSingleton<IDatabaseConnection, DatabaseConnection>();
+
+            services.AddScoped<ITransactionClientFactory, TransactionClientFactory>();
+            services.AddScoped<ITransactionGetRequestFactory, TransactionGetRequestFactory>();
+            services.AddScoped<ITransactionBindingProvider,  IasWorldBindingProvider>();
 
             // Business & Data Layers
             services.AddScoped<ITaxService, TaxService>();

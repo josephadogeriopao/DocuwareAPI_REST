@@ -47,7 +47,6 @@ namespace OPAOWebService.Server.Infrastructure.TransactionServiceProxy
                 {
                     _client.Abort();
                 }
-
                 _client = _clientFactory.Create(_serviceUser, _servicePass);
             }
             return _client;
@@ -69,6 +68,11 @@ namespace OPAOWebService.Server.Infrastructure.TransactionServiceProxy
             }
             catch (CommunicationException ex)
             {
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine($"Details: {ex.InnerException.Message}");
+                                   
+                }
                 //Log.Error(ex, "Network/Communication error with External Transaction Service");
                 client.Abort();
                 _client = null; // Clear the instance so the next call gets a fresh one
