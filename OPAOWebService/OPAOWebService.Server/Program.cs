@@ -34,6 +34,11 @@ builder.Services.AddDataProtection()
 builder.Services.AddProjectServices(); // Registers DB, TaxService, TaxRepo
 builder.Services.AddSwaggerDocumentation(); // Registers SwaggerGen
 
+// Add the new logging extension
+builder.Host.AddSerilogLogging(builder.Configuration, builder.Environment.ContentRootPath);
+
+
+
 // 3. Controllers and JSON Strictness
 builder.Services.AddControllers()
     .AddJsonOptions(options =>

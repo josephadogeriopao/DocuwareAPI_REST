@@ -16,6 +16,7 @@ function App() {
         populateWeatherData();
     }, []);
 
+    /*
     const contents = forecasts === undefined
         ? <p><em>Loading... Please refresh once the ASP.NET backend has started. See <a href="https://aka.ms/jspsintegrationreact">https://aka.ms/jspsintegrationreact</a> for more details.</em></p>
         : <table className="table table-striped" aria-labelledby="tableLabel">
@@ -38,12 +39,15 @@ function App() {
                 )}
             </tbody>
         </table>;
+        */
 
     return (
         <div>
-            <h1 id="tableLabel">Weather forecast</h1>
+            <h1 id="tableLabel">OPAO Web Service Logs</h1>
             <p>This component demonstrates fetching data from the server.</p>
-            {contents}
+
+           
+            {/**{contents}*/}
             <br /><br /><br />
             <ErrorLogViewer />
 
