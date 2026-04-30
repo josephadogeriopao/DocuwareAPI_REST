@@ -1,25 +1,22 @@
-﻿using OPAOWebService.Server.Models.DTOs.Requests;
+﻿using OPAOWebService.Server.Models.DTOs;
 
 namespace OPAOWebService.Server.Business.Interfaces
 {
     /// <summary>
-    /// Defines business logic operations for processing tax-related property data.
+    /// Defines the contract for retrieving and processing application log data.
     /// </summary>
     /// <remarks>
     /// <para><strong>Author:</strong> Joseph Adogeri</para>
-    /// <para><strong>Since:</strong> 23-APR-2026</para>
-    /// <para><strong>Version:</strong> 1.1.0</para>
-    /// <para><strong>File:</strong> ITaxService.cs</para>
+    /// <para><strong>Since:</strong> 30-APR-2026</para>
+    /// <para><strong>Version:</strong> 1.0.0</para>
+    /// <para><strong>File:</strong> ILogService.cs</para>
     /// </remarks>
-
-    public interface ITaxService
+    public interface ILogService
     {
-
         /// <summary>
-        /// Updates the valuation status of a property parcel.
+        /// Asynchronously retrieves a list of parsed log entries from the NDJSON source.
         /// </summary>
-        /// <param name="request">The assessment update details.</param>
-        /// <returns>An integer status code (e.g., 1 for success, 0 for failure).</returns>
-        int UpdatePropertyValuation(AssessmentStatusRequest request);
+        /// <returns>A task representing the asynchronous operation, containing a list of <see cref="LogEntry"/>.</returns>
+        Task<List<LogEntry>> GetApiLogsAsync();
     }
 }

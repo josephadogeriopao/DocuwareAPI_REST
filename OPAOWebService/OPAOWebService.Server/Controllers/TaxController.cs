@@ -22,7 +22,7 @@ namespace OPAOWebService.Server.Controllers
             _taxService = taxService;
             _logger = logger;
         }
- 
+
         [HttpPost("AssessmentUpdateStatus", Name = "PostAssessmentUpdateStatus")]
         public AssessmentStatusResponse GetAssessmentUpdateStatus(
          string ParcelId, string ReasonCode, int RevisedLand, int RevisedBldg, int RevisedTot, string Notes, string ManualCode)

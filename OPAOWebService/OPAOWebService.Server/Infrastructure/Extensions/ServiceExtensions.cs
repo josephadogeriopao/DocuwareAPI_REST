@@ -30,6 +30,9 @@ namespace OPAOWebService.Server.Infrastructure.Extensions
             services.AddScoped<ITaxService, TaxService>();
             services.AddScoped<ITaxRepository, TaxRepository>();
 
+            services.AddScoped<ILogService, LogService>();
+
+
             return services;
         }
 

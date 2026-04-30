@@ -1,4 +1,5 @@
-﻿using IasworldTransactionService;
+﻿
+using IasworldTransactionService;
 using OPAOWebService.Server.Business.Interfaces;
 using OPAOWebService.Server.Business.Validators;
 using OPAOWebService.Server.Business.Validators.Interfaces;
@@ -61,7 +62,8 @@ namespace OPAOWebService.Server.Business
             { "SomeSetting", "SomeValue" }
                 })
                 .Build(),
-            new ConfigProtector())   { } // Standard chaining
+            new ConfigProtector())
+        { } // Standard chaining
 
 
         /// <inheritdoc />
@@ -100,7 +102,7 @@ namespace OPAOWebService.Server.Business
                     message: $"The parcel with ID '{ParcelId}' does not exist in our records.", entityName: "ASSESSMENT", entityKey: ParcelId
                  );
             }
-            string username = _configProtector.Decrypt(_configuration["IAS_USERNAME"], "IAS_USERNAME") ;
+            string username = _configProtector.Decrypt(_configuration["IAS_USERNAME"], "IAS_USERNAME");
             string password = _configProtector.Decrypt(_configuration["IAS_PASSWORD"], "IAS_PASSWORD");
             Debug.WriteLine("ias username ==> " + username + ", ias password ==> " + password);
             Console.WriteLine("ias username ==> " + username + ", ias password ==> " + password);
@@ -121,8 +123,8 @@ namespace OPAOWebService.Server.Business
                 $" {transactionGetRequest.TransactionName}, {transactionGetRequest.SubjectId}," +
                 $" {transactionGetRequest.Jurisdiction}");
             Debug.WriteLine($"transactiongetrequest data ==> {transactionGetRequest.TaxYear}," +
-    $" {transactionGetRequest.TransactionName}, {transactionGetRequest.SubjectId}," +
-    $" {transactionGetRequest.Jurisdiction}");
+                $" {transactionGetRequest.TransactionName}, {transactionGetRequest.SubjectId}," +
+                $" {transactionGetRequest.Jurisdiction}");
             string returnXml = proxy.GetTransactionXml(transactionGetRequest);
             Console.WriteLine("return Xml = " + returnXml);
             Debug.WriteLine("return Xml = " + returnXml);
@@ -198,7 +200,7 @@ namespace OPAOWebService.Server.Business
             // Safely handles cases where the key might be missing
             string webConfigSubmitMode = _configuration["SUBMIT_MODE"] ?? "NOT_SET";
 
-            Debug.WriteLine($"web config submit mode: {webConfigSubmitMode}"); Debug.WriteLine("web config submit mode " +  webConfigSubmitMode);
+            Debug.WriteLine($"web config submit mode: {webConfigSubmitMode}"); Debug.WriteLine("web config submit mode " + webConfigSubmitMode);
             Console.WriteLine("web config submit mode " + webConfigSubmitMode);
 
             TransactionSubmitMode transactionSubmitMode = SubmitModeUtil.GetMode(webConfigSubmitMode);
