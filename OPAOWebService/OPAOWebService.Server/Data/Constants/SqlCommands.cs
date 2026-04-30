@@ -16,29 +16,31 @@
         /// Retrieves the current tax year for jurisdiction '9' using Environment.NewLine formatting.
         /// Clean, verbatim string version of the tax year lookup.
         /// </summary>
-        public const string GetCurrentTaxYear = """
-        SELECT THISYEAR 
-        FROM AASYSJUR A 
-        WHERE A.JUR = '9'
-        """;
+        public const string GetCurrentTaxYear =
+            """
+                SELECT THISYEAR 
+                FROM AASYSJUR A 
+                WHERE A.JUR = '9'
+            """;
 
         /// <summary>
         /// Checks if a Parcel ID exists for a specific tax year using string interpolation.
         /// Secured version of the Parcel ID check using Oracle/Standard bind variables (:parid, :taxyr).
         /// Recommended for preventing SQL injection.
         /// </summary>
-        public const string IsValidParcelId = """
-        SELECT 
-            CASE 
-                WHEN EXISTS (
-                    SELECT 1 FROM ASMT A 
-                    WHERE A.parid = :parid 
-                    AND A.taxyr = :taxyr 
-                    AND A.cur = 'Y'
-                ) THEN 'true' 
-                ELSE 'false' 
-            END 
-        FROM DUAL
-        """;
+        public const string IsValidParcelId =
+            """
+                SELECT 
+                    CASE 
+                        WHEN EXISTS (
+                            SELECT 1 FROM ASMT A 
+                            WHERE A.parid = :parid 
+                            AND A.taxyr = :taxyr 
+                            AND A.cur = 'Y'
+                        ) THEN 'true' 
+                        ELSE 'false' 
+                    END 
+                FROM DUAL
+            """;
     }
 }
