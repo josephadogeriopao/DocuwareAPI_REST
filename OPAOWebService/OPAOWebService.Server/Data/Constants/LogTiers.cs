@@ -9,3 +9,4 @@
         public const string Domain = "Domain";
     }
 }
+
