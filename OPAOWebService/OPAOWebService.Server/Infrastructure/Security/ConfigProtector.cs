@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.DataProtection;
 using OPAOWebService.Server.Infrastructure.Security.Interfaces;
+using System.Security.Cryptography;
 
 namespace OPAOWebService.Server.Infrastructure.Security
 {
@@ -51,11 +52,11 @@ namespace OPAOWebService.Server.Infrastructure.Security
                 // 2. Perform the decryption (Unprotect)
                 return _protector.Unprotect(encryptedValue);
             }
-            catch (Exception ex)
+            catch (CryptographicException ex)
             {
                 // 3. Provide context-specific error messages (crucial for troubleshooting machine-bound DPAPI)
-                throw new Exception($"Decryption failed for configuration field '{fieldName}'. " +
-                                    "Ensure the value was encrypted on this specific machine/account and that the purpose string matches.", ex);
+                throw new CryptographicException(
+                          $"Decryption failed for '{fieldName}'. Ensure the value was encrypted on this machine/account.", ex);
             }
         }
     }

@@ -36,18 +36,18 @@ namespace OPAOWebService.Server.Business
     /// </remarks>
     public class TaxService : ITaxService
     {
-        private readonly ITaxRepository taxRepository;
-        private readonly ITransactionClientFactory transactionClientFactory;
-        private readonly ITransactionGetRequestFactory transactionGetRequestFactory;
+        private readonly ITaxRepository _taxRepository;
+        private readonly ITransactionClientFactory _transactionClientFactory;
+        private readonly ITransactionGetRequestFactory _transactionGetRequestFactory;
         private readonly IConfiguration _configuration;
         private readonly IConfigProtector _configProtector;
 
         public TaxService(ITaxRepository taxRepository, ITransactionClientFactory transactionClientFactory, ITransactionGetRequestFactory transactionGetRequestFactory,
             IConfiguration configuration, IConfigProtector configProtector)
         {
-            this.taxRepository = taxRepository;
-            this.transactionClientFactory = transactionClientFactory;
-            this.transactionGetRequestFactory = transactionGetRequestFactory;
+            this._taxRepository = taxRepository;
+            this._transactionClientFactory = transactionClientFactory;
+            this._transactionGetRequestFactory = transactionGetRequestFactory;
             this._configuration = configuration;
             this._configProtector = configProtector;
         }
@@ -74,7 +74,7 @@ namespace OPAOWebService.Server.Business
         {
             TransactionSubmitResponse transactionSubmitResponse = null;
             // initializing local variables
-            int TaxYear = this.taxRepository.GetCurrentTaxYear();
+            int TaxYear = this._taxRepository.GetCurrentTaxYear();
             string ParcelId = request.ParcelId;
             string ReasonCode = request.ReasonCode;
             string Notes = request.Notes;
@@ -90,7 +90,7 @@ namespace OPAOWebService.Server.Business
 
             ValidationHelper.EnsureValid(validators);
 
-            Boolean isValid = this.taxRepository.IsValidParcelId(ParcelId, TaxYear);
+            Boolean isValid = this._taxRepository.IsValidParcelId(ParcelId, TaxYear);
 
             if (!isValid)
             {
@@ -104,9 +104,9 @@ namespace OPAOWebService.Server.Business
             string username = _configProtector.Decrypt(_configuration["IAS_USERNAME"], "IAS_USERNAME");
             string password = _configProtector.Decrypt(_configuration["IAS_PASSWORD"], "IAS_PASSWORD");
 
-            var proxy = new TransactionServiceProxy(this.transactionClientFactory, username, password);
+            var proxy = new TransactionServiceProxy(this._transactionClientFactory, username, password);
 
-            TransactionGetRequest transactionGetRequest = this.transactionGetRequestFactory.Create(ParcelId, TaxYear);
+            TransactionGetRequest transactionGetRequest = this._transactionGetRequestFactory.Create(ParcelId, TaxYear);
 
             // Get transaction xml response from iasworld in string format
             Console.WriteLine($"transactiongetrequest data ==> {transactionGetRequest.TaxYear}," +

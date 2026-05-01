@@ -1,4 +1,5 @@
-﻿using OPAOWebService.Server.Data.Constants;
+﻿using Newtonsoft.Json;
+using OPAOWebService.Server.Data.Constants;
 using OPAOWebService.Server.Models.DTOs.Responses;
 using OPAOWebService.Server.Models.Exceptions;
 using Oracle.ManagedDataAccess.Client;
@@ -17,7 +18,8 @@ namespace OPAOWebService.Server.Infrastructure.Helpers
             return ex switch
             {
                 // [Presentation]
-                ValidationException => LogTiers.Presentation,
+                ValidationException or
+                JsonSerializationException => LogTiers.Presentation,
 
                 // [Business Logic]
                 EntityNotFoundException or

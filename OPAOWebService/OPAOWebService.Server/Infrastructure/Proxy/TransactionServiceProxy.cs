@@ -76,14 +76,15 @@ namespace OPAOWebService.Server.Infrastructure.TransactionServiceProxy
                 //Log.Error(ex, "Network/Communication error with External Transaction Service");
                 client.Abort();
                 _client = null; // Clear the instance so the next call gets a fresh one
-                throw new Exception("The external transaction service is currently unreachable.");
+                throw new CommunicationException("The external transaction service is currently unreachable.", ex);
+
             }
             catch (TimeoutException ex)
             {
                 //Log.Error(ex, "Timeout occurred calling External Transaction Service");
                 client.Abort();
                 _client = null;
-                throw new Exception("The request to the transaction service timed out.");
+                throw new TimeoutException("The request to the transaction service timed out.", ex);
             }
             // Note: No 'finally' block disposing the client here; reuse is handled by Dispose()
         }

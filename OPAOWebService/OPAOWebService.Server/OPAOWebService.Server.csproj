@@ -15,6 +15,7 @@
       <Version>10.*-*</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.17.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="23.26.200" />
     <PackageReference Include="Serilog" Version="4.3.1" />
     <PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
@@ -34,8 +35,5 @@
     <PackageReference Include="System.ServiceModel.NetTcp" Version="10.0.652802" />
     <PackageReference Include="System.ServiceModel.Security" Version="6.0.0" />
     <PackageReference Include="System.ServiceModel.Federation" Version="10.0.652802" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Connected Services\" />
   </ItemGroup>
 </Project>

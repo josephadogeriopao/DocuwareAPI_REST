@@ -1,25 +1,8 @@
 ﻿
 
-using IasworldTransactionService;
 using OPAOWebService.Server.Business.Interfaces;
-using OPAOWebService.Server.Business.Validators;
-using OPAOWebService.Server.Business.Validators.Interfaces;
-using OPAOWebService.Server.Data.Repositories;
-using OPAOWebService.Server.Data.Repositories.Interfaces;
-using OPAOWebService.Server.Factories;
-using OPAOWebService.Server.Factories.Interfaces;
-using OPAOWebService.Server.Infrastructure.Helpers;
-using OPAOWebService.Server.Infrastructure.Security;
-using OPAOWebService.Server.Infrastructure.Security.Interfaces;
-using OPAOWebService.Server.Infrastructure.TransactionServiceProxy;
 using OPAOWebService.Server.Models.DTOs;
-using OPAOWebService.Server.Models.DTOs.Requests;
-using OPAOWebService.Server.Models.Entities;
-using OPAOWebService.Server.Models.Exceptions;
-using OPAOWebService.Server.Utils;
-using System.Diagnostics;
 using System.Text.Json;
-using System.Xml.Linq;
 
 namespace OPAOWebService.Server.Business
 {

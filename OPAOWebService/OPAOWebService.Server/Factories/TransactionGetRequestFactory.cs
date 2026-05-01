@@ -39,8 +39,12 @@ namespace OPAOWebService.Server.Factories
         /// <returns>A fully initialized <see cref="TransactionGetRequest"/> object.</returns>
         public TransactionGetRequest Create(string parcelId, int taxYear)
         {
-            string transactionName = _configProtector.Decrypt(_configuration["IAS_TRANS_NAME"], "IAS_TRANS_NAME") ?? "DefaultValue";
-            string jurisdiction = _configProtector.Decrypt(_configuration["IAS_JUR"], "IAS_JUR") ?? "DefaultValue";
+            if (string.IsNullOrWhiteSpace(parcelId)) throw new ArgumentException("Parcel ID must be provided to create a transaction request.", nameof(parcelId));
+
+            string transactionName = _configProtector.Decrypt(_configuration["IAS_TRANS_NAME"], "IAS_TRANS_NAME");
+            string jurisdiction = _configProtector.Decrypt(_configuration["IAS_JUR"], "IAS_JUR");
+
+
 
             TransactionGetRequest req = new TransactionGetRequest
             {

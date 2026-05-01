@@ -3,6 +3,7 @@ using OPAOWebService.Server.Factories.Interfaces;
 using OPAOWebService.Server.Infrastructure.Security;
 using OPAOWebService.Server.Infrastructure.Security.Interfaces;
 using OPAOWebService.Server.Infrastructure.Validation;
+using OPAOWebService.Server.Models.Exceptions;
 using System.Configuration;
 using System.Diagnostics;
 using System.Linq; 
@@ -64,7 +65,10 @@ namespace OPAOWebService.Server.Factories
                 // We catch general exceptions because programmatic config failures 
                 // are usually ArgumentExceptions or InvalidOperationExceptions.
                 System.Diagnostics.Debug.WriteLine($"exception in transation client factory : Details: {ex.InnerException.Message}");
-                throw new Exception($"Failed to initialize IasWorld Transaction Client: {ex.Message}", ex);
+                throw new InfrastructureException(
+                    $"Failed to initialize IasWorld Transaction Client: {ex.Message}",
+                    "IasWorld WCF Service",
+                    ex);
             }
         }
     }
