@@ -1,4 +1,4 @@
-import { ReactNode } from 'react'; // Import ReactNode
+import React from 'react'; // Import ReactNode
 
 type SidebarProps = {
     fromDate: string;
@@ -6,7 +6,7 @@ type SidebarProps = {
     onFromChange: (val: string) => void;
     onToChange: (val: string) => void;
     onClear: () => void;
-    children?: ReactNode; // ADD THIS: Allows passing the Parcel ID input
+    children?: React.ReactNode; // ADD THIS: Allows passing the Parcel ID input
 };
 
 export const LogSidebar = ({

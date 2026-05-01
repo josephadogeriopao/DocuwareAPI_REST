@@ -10,6 +10,7 @@ namespace OPAOWebService.Server.Infrastructure.Extensions
 {
     public static class LoggingExtensions
     {
+        /*
         public static void AddSerilogLogging(this ConfigureHostBuilder host, IConfiguration configuration, string contentRootPath)
         {
             host.UseSerilog((context, services, loggerConfiguration) =>
@@ -51,7 +52,39 @@ namespace OPAOWebService.Server.Infrastructure.Extensions
                             path: Path.Combine(logDirectory, "api-logs-.json"),
                             rollingInterval: RollingInterval.Day));
             });
+        }*/
+        public static void AddSerilogLogging(this ConfigureHostBuilder host, IConfiguration configuration, string contentRootPath)
+        {
+            host.UseSerilog((context, services, loggerConfiguration) =>
+            {
+                // 1. Use a safer path resolution
+                string logDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
+
+                // 2. Set global level to Debug so logs can actually pass through
+                loggerConfiguration
+                    .MinimumLevel.Debug()
+                    .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+                    .MinimumLevel.Override("System", LogEventLevel.Warning)
+                    .Enrich.FromLogContext();
+
+                // 3. General Log Sink
+                loggerConfiguration.WriteTo.Logger(lc => lc
+                    .Filter.ByIncludingOnly("StartsWith(SourceContext, 'OPAOWebService')")
+                    .WriteTo.File(
+                        path: Path.Combine(logDirectory, "general-.txt"),
+                        rollingInterval: RollingInterval.Day));
+
+                // 4. JSON Log Sink
+                loggerConfiguration.WriteTo.Logger(lc => lc
+                    .Filter.ByIncludingOnly(LoggingConstants.AppNamespaceFilter)
+                    .WriteTo.File(
+                        formatter: new ExpressionTemplate(LoggingConstants.ReactJsonTemplate,
+                                   nameResolver: new StaticMemberNameResolver(typeof(SerilogFunctions))),
+                        path: Path.Combine(logDirectory, "api-logs-.json"),
+                        rollingInterval: RollingInterval.Day));
+            });
         }
+
     }
 
 }
