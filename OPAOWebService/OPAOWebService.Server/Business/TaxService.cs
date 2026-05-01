@@ -41,7 +41,6 @@ namespace OPAOWebService.Server.Business
         private readonly ITransactionGetRequestFactory transactionGetRequestFactory;
         private readonly IConfiguration _configuration;
         private readonly IConfigProtector _configProtector;
-        //private readonly ILogger dbLog = Log.ForContext("SourceContext", "Database");
 
         public TaxService(ITaxRepository taxRepository, ITransactionClientFactory transactionClientFactory, ITransactionGetRequestFactory transactionGetRequestFactory,
             IConfiguration configuration, IConfigProtector configProtector)
@@ -104,19 +103,10 @@ namespace OPAOWebService.Server.Business
             }
             string username = _configProtector.Decrypt(_configuration["IAS_USERNAME"], "IAS_USERNAME");
             string password = _configProtector.Decrypt(_configuration["IAS_PASSWORD"], "IAS_PASSWORD");
-            Debug.WriteLine("ias username ==> " + username + ", ias password ==> " + password);
-            Console.WriteLine("ias username ==> " + username + ", ias password ==> " + password);
-
 
             var proxy = new TransactionServiceProxy(this.transactionClientFactory, username, password);
-            Console.WriteLine("created proxy successfully");
-            Debug.WriteLine("created proxy successfully");
 
-            Console.WriteLine("before get request create");
-            Debug.WriteLine("before get request create");
             TransactionGetRequest transactionGetRequest = this.transactionGetRequestFactory.Create(ParcelId, TaxYear);
-            Console.WriteLine("after get request create");
-            Debug.WriteLine("after get request create");
 
             // Get transaction xml response from iasworld in string format
             Console.WriteLine($"transactiongetrequest data ==> {transactionGetRequest.TaxYear}," +

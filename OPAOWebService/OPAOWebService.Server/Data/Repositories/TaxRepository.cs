@@ -44,7 +44,6 @@ namespace OPAOWebService.Server.Data.Repositories
                 {
                     conn.Open();
                     String sqlQuery = SqlCommands.GetCurrentTaxYear;
-                    Debug.WriteLine("sql query get tax year: " + sqlQuery);
 
                     using (OracleCommand cmd = new OracleCommand(sqlQuery, conn))
                     using (OracleDataReader reader = cmd.ExecuteReader())
@@ -80,10 +79,6 @@ namespace OPAOWebService.Server.Data.Repositories
                 {
                     conn.Open();
                     string sqlQuery = SqlCommands.IsValidParcelId;
-                    Debug.WriteLine("sql query is valid parid : " + sqlQuery);
-                    Debug.WriteLine($"parameters ==> parid: {parcelId}, taxyear: {taxYear}");
-                    Console.WriteLine($"parameters ==> parid: {parcelId}, taxyear: {taxYear}");
-
 
                     using (var cmd = new OracleCommand(sqlQuery, conn))
                     {
@@ -106,8 +101,6 @@ namespace OPAOWebService.Server.Data.Repositories
                 }
                 catch (OracleException ex)
                 {
-                    ////Log.ForContext("SourceContext", "Database")
-                    //   .Error(ex, "Oracle Error validating Parid: {Parid}", parcelId);
                     throw;
                 }
             }
