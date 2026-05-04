@@ -1,109 +1,48 @@
 
 using Microsoft.AspNetCore.DataProtection;
 using OPAOWebService.Server.Infrastructure.Extensions;
+using OPAOWebService.Server.Infrastructure.Helpers;
 using Swashbuckle.AspNetCore.SwaggerUI;
-using System.Buffers.Text;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
-using System.IO;
-using static System.Net.Mime.MediaTypeNames;
-
-using System;
-using System.Diagnostics;
-
-// 1. Store the logo in a Verbatim String (the @ allows multi-line text)
-string logoUrl = @"
-              .-----------.              
-           . '  _________  ' .           
-         /    /  _   _  \    \          
-        /    /  / \ / \  \    \         
-
-       |    |   \  V  /   |    |        
-       |    |    )   (    |    |        
-        \    \  /_____\  /    /         
-         \    '---------'    /          
-           ' .           . '            
-              '---------'               
-        ORLEANS PARISH ASSESSOR
-";
-
-// 2. Print to the Console (Visible to the user)
-Console.WriteLine(logoUrl);
-Console.WriteLine("INFO: Logo displayed in console.");
-
-// 3. Print to the Debug Output (Visible in the Visual Studio 'Output' window)
-Debug.WriteLine(logoUrl);
-Debug.WriteLine("DEBUG: Orleans Parish Assessor's Office Logo Loaded successfully.");
-
-// Replace the URL with a direct path to the logo image file
-
-// C# Console cannot render images, so we print the metadata for debugging
-Console.WriteLine("--- LOGO DEBUG INFO ---");
-Console.WriteLine($"Image Source: {logoUrl}");
-Console.WriteLine("Format: PNG");
-Console.WriteLine("-----------------------");
-Console.WriteLine("DEBUG: Orleans Parish Assessor's Office Logo Loaded");
-
-
-Debug.WriteLine("--- LOGO DEBUG INFO ---");
-
-Debug.WriteLine($"Image Source: {logoUrl}");
-Debug.WriteLine("Format: PNG");
-Debug.WriteLine("-----------------------");
-// The equivalent of your second console.log
-Debug.WriteLine("DEBUG: Orleans Parish Assessor's Office Logo Loaded");
+using System.Drawing.Imaging;
+using System.Text;
 
 
 try
 {
-    // Create a specific folder for keys (e.g., in your user profile)
-    var keyPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "DataProtectionKeys");
-
-    // Ensure the directory exists
-    if (!Directory.Exists(keyPath)) Directory.CreateDirectory(keyPath);
-
-
-
+    ConsoleHelper.DisplayApplicationLogo();
 
     var builder = WebApplication.CreateBuilder(args);
 
-    // Define your log path
     var logPath = Path.Combine(builder.Environment.ContentRootPath, "logs");
 
-    // Force create the directory if it's missing
-    //if (!Directory.Exists(logPath))
-    //{
-    //    Directory.CreateDirectory(logPath);
-    //}
 
-    // 0. Load Environment Variables
-    // Load .env into the system environment so IConfiguration can see them
-    // This looks for the .env file in the actual project directory
-    //var envPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ".env");
-    //DotNetEnv.Env.Load(envPath);
     DotNetEnv.Env.Load();
     builder.Configuration.AddEnvironmentVariables();
 
-    // 1. Data Protection - Secure Sensitive Data
+    // Data Protection - Secure Sensitive Data
+    // 1. Get the path from appsettings.json (defaults to LocalApplicationData if missing)
+    var keyPath = builder.Configuration["DataProtection:KeyPath"]
+                  ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "DataProtectionKeys");
+
+    // 2. Ensure the directory exists
+    if (!Directory.Exists(keyPath)) Directory.CreateDirectory(keyPath);
+
+    // 3. Configure using the dynamic path
     builder.Services.AddDataProtection()
         .SetApplicationName("OPAOWebService")
-        .PersistKeysToFileSystem(new DirectoryInfo(keyPath)); // Force both to use this folder; 
+        .PersistKeysToFileSystem(new DirectoryInfo(keyPath));
+
 
     // Dependency Injection
-    // Add services to the container.
-    // Register the connection provider as a Singleton or Scoped
-
-    // 2. Register Services via your Extensions
     builder.Services.AddProjectServices(); // Registers DB, TaxService, TaxRepo
     builder.Services.AddSwaggerDocumentation(); // Registers SwaggerGen
 
     // Add the new logging extension
     builder.Host.AddSerilogLogging(builder.Configuration, builder.Environment.ContentRootPath);
 
-
-
-    // 3. Controllers and JSON Strictness
+    // Controllers and JSON Strictness
     builder.Services.AddControllers()
         .AddJsonOptions(options =>
         {
