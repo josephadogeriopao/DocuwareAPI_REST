@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.DependencyInjection;
 // 1. Define the shared key path
-var keyPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "OPAO-Keys");
+var keyPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "DataProtectionKeys");
 
 // 2. Ensure the directory exists
 if (!Directory.Exists(keyPath)) Directory.CreateDirectory(keyPath);
@@ -13,7 +13,7 @@ var serviceCollection = new ServiceCollection();
 // 2. Configure Data Protection (Notice we don't use .Services here)
 serviceCollection.AddDataProtection()
     .SetApplicationName("OPAOWebService")
-    .PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "OPAO-Keys")));
+    .PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "DataProtectionKeys")));
 
 // 3. Build the provider FROM the collection
 var serviceProvider = serviceCollection.BuildServiceProvider();
@@ -111,7 +111,7 @@ static void RunBulkMode(IDataProtector protector)
         return;
     }
 
-    string projectPath = projectRootDir.FullName;
+    string projectPath = projectRootDir.FullName + "\\..\\";
 
     // 2. Scan for .txt files in the project root, excluding results we already generated
     var files = Directory.GetFiles(projectPath, "*.txt")

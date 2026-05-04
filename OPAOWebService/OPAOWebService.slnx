@@ -1,8 +1,16 @@
 <Solution>
-  <Project Path="ConfigTool/ConfigTool.csproj" />
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+  </Configurations>
+  <Project Path="ConfigTool/ConfigTool.csproj">
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
   <Project Path="opaowebservice.client/opaowebservice.client.esproj">
     <Build />
     <Deploy />
   </Project>
-  <Project Path="OPAOWebService.Server/OPAOWebService.Server.csproj" />
+  <Project Path="OPAOWebService.Server/OPAOWebService.Server.csproj">
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
 </Solution>

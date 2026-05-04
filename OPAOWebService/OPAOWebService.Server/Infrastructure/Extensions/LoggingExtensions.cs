@@ -5,12 +5,13 @@ using Serilog.Expressions;
 using Serilog.Formatting.Compact;
 using Serilog.Templates;
 using OPAOWebService.Server.Infrastructure.Logging;
+using Microsoft.Extensions.Hosting;
 
 namespace OPAOWebService.Server.Infrastructure.Extensions
 {
     public static class LoggingExtensions
     {
-        /*
+
         public static void AddSerilogLogging(this ConfigureHostBuilder host, IConfiguration configuration, string contentRootPath)
         {
             host.UseSerilog((context, services, loggerConfiguration) =>
@@ -20,69 +21,73 @@ namespace OPAOWebService.Server.Infrastructure.Extensions
                 if (!Directory.Exists(logDirectory))
                     Directory.CreateDirectory(logDirectory);
 
-                string oracleFilter = "SourceContext = 'Database' or @m like '%DB Error%' or (@x is not null and @x like '%Oracle%')";
-
-                loggerConfiguration
-                    // 1. Mute EVERYTHING by default (even Fatal startup errors)
-                    .MinimumLevel.Fatal()
-
-                    // 2. Kill specific framework noise
-                    .MinimumLevel.Override("Microsoft", LogEventLevel.Fatal)
-                    .MinimumLevel.Override("System", LogEventLevel.Fatal)
-                    .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Fatal)
-
-                    // 3. WHITELIST your project (Only your code can speak)
-                    .MinimumLevel.Override("OPAOWebService", LogEventLevel.Debug)
-
-                    .Enrich.FromLogContext()
-
-                    // General Log Sink
-                    .WriteTo.Logger(lc => lc
-                        .Filter.ByIncludingOnly("StartsWith(SourceContext, 'OPAOWebService')")
-                        .WriteTo.File(
-                            path: Path.Combine(logDirectory, "general-.txt"),
-                            rollingInterval: RollingInterval.Day))
-
-                    // JSON Log Sink for React
-                    .WriteTo.Logger(lc => lc
-                        .Filter.ByIncludingOnly(LoggingConstants.AppNamespaceFilter)
-                        .WriteTo.File(
-                        new ExpressionTemplate(LoggingConstants.ReactJsonTemplate, nameResolver: new StaticMemberNameResolver(typeof(SerilogFunctions))),
-                            // new RenderedCompactJsonFormatter(),
-                            path: Path.Combine(logDirectory, "api-logs-.json"),
-                            rollingInterval: RollingInterval.Day));
+                if (context.HostingEnvironment.IsDevelopment())
+                    ConfigureDevelopmentLogger(loggerConfiguration, logDirectory);
+                else
+                    ConfigureProductionLogger(loggerConfiguration, logDirectory);
             });
-        }*/
-        public static void AddSerilogLogging(this ConfigureHostBuilder host, IConfiguration configuration, string contentRootPath)
+        }
+        private static void ConfigureDevelopmentLogger(LoggerConfiguration loggerConfiguration, string logDirectory)
         {
-            host.UseSerilog((context, services, loggerConfiguration) =>
-            {
-                // 1. Use a safer path resolution
-                string logDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
+            loggerConfiguration
+                // 1. Mute EVERYTHING by default (even Fatal startup errors)
+                .MinimumLevel.Fatal()
 
-                // 2. Set global level to Debug so logs can actually pass through
-                loggerConfiguration
-                    .MinimumLevel.Debug()
-                    .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-                    .MinimumLevel.Override("System", LogEventLevel.Warning)
-                    .Enrich.FromLogContext();
+                // 2. Kill specific framework noise
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Fatal)
+                .MinimumLevel.Override("System", LogEventLevel.Fatal)
+                .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Fatal)
 
-                // 3. General Log Sink
-                loggerConfiguration.WriteTo.Logger(lc => lc
+                // 3. WHITELIST your project (Only your code can speak)
+                .MinimumLevel.Override("OPAOWebService", LogEventLevel.Debug)
+
+                .Enrich.FromLogContext()
+
+                // General Log Sink
+                .WriteTo.Logger(lc => lc
                     .Filter.ByIncludingOnly("StartsWith(SourceContext, 'OPAOWebService')")
                     .WriteTo.File(
                         path: Path.Combine(logDirectory, "general-.txt"),
-                        rollingInterval: RollingInterval.Day));
+                        rollingInterval: RollingInterval.Day))
 
-                // 4. JSON Log Sink
-                loggerConfiguration.WriteTo.Logger(lc => lc
+                // JSON Log Sink for React
+                .WriteTo.Logger(lc => lc
                     .Filter.ByIncludingOnly(LoggingConstants.AppNamespaceFilter)
                     .WriteTo.File(
-                        formatter: new ExpressionTemplate(LoggingConstants.ReactJsonTemplate,
-                                   nameResolver: new StaticMemberNameResolver(typeof(SerilogFunctions))),
+                    new ExpressionTemplate(LoggingConstants.ReactJsonTemplate, nameResolver: new StaticMemberNameResolver(typeof(SerilogFunctions))),
+                        // new RenderedCompactJsonFormatter(),
                         path: Path.Combine(logDirectory, "api-logs-.json"),
-                        rollingInterval: RollingInterval.Day));
-            });
+                        rollingInterval: RollingInterval.Day)
+           );
+
+
+        }
+
+
+        private static void ConfigureProductionLogger(LoggerConfiguration loggerConfiguration, string logDirectory)
+        {
+            loggerConfiguration
+              .MinimumLevel.Debug()
+              .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+              .MinimumLevel.Override("System", LogEventLevel.Warning)
+              .Enrich.FromLogContext();
+
+            // 3. General Log Sink
+            loggerConfiguration.WriteTo.Logger(lc => lc
+                .Filter.ByIncludingOnly("StartsWith(SourceContext, 'OPAOWebService')")
+                .WriteTo.File(
+                    path: Path.Combine(logDirectory, "general-.txt"),
+                    rollingInterval: RollingInterval.Day));
+
+            // 4. JSON Log Sink
+            loggerConfiguration.WriteTo.Logger(lc => lc
+                .Filter.ByIncludingOnly(LoggingConstants.AppNamespaceFilter)
+                .WriteTo.File(
+                    formatter: new ExpressionTemplate(LoggingConstants.ReactJsonTemplate,
+                               nameResolver: new StaticMemberNameResolver(typeof(SerilogFunctions))),
+                    path: Path.Combine(logDirectory, "api-logs-.json"),
+                    rollingInterval: RollingInterval.Day)
+                );
         }
 
     }
