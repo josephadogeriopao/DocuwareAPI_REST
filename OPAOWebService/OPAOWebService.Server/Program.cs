@@ -1,5 +1,6 @@
 
 using Microsoft.AspNetCore.DataProtection;
+using OPAOWebService.Server.Data.Constants;
 using OPAOWebService.Server.Infrastructure.Extensions;
 using OPAOWebService.Server.Infrastructure.Helpers;
 using Swashbuckle.AspNetCore.SwaggerUI;
@@ -24,7 +25,7 @@ try
     // Data Protection - Secure Sensitive Data
     // 1. Get the path from appsettings.json (defaults to LocalApplicationData if missing)
     var keyPath = builder.Configuration["DataProtection:KeyPath"]
-                  ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "DataProtectionKeys");
+                  ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), ConfigConstants.DataProtectionKey);
 
     // 2. Ensure the directory exists
     if (!Directory.Exists(keyPath)) Directory.CreateDirectory(keyPath);

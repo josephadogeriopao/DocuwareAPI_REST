@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.DependencyInjection;
+using OPAOWebService.Server.Data.Constants;
 // 1. Define the shared key path
 var keyPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "DataProtectionKeys");
 
@@ -20,7 +21,7 @@ var serviceProvider = serviceCollection.BuildServiceProvider();
 
 
 var protector = serviceProvider.GetDataProtectionProvider()
-    .CreateProtector("OPAODataProtectionEncryption");
+    .CreateProtector(ConfigConstants.EncryptionPurpose);
 
 while (true)
 {
