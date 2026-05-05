@@ -47,9 +47,10 @@ export default defineConfig({
     },
     server: {
         proxy: {
-            '^/log': {
+            '^/api': {
                 target,
-                secure: false
+                secure: false,
+                changeOrigin: true // Recommended for IIS/ASP.NET Core
             }
         },
         port: parseInt(env.DEV_SERVER_PORT || '63100'),

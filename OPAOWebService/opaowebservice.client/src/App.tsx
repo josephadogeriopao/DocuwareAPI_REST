@@ -16,7 +16,13 @@ function App() {
 
     // 1. Fetching
     useEffect(() => {
-        fetch('/log/logentries').then(res => res.json()).then(setLogEntries);
+        fetch('/api/Log/LogEntries')
+            .then(res => {
+                if (!res.ok) throw new Error('Network response was not ok');
+                return res.json();
+            })
+            .then(setLogEntries)
+            .catch(err => console.error("Fetch error:", err));
     }, []);
 
     // 2. Filtering (Dates + Search)

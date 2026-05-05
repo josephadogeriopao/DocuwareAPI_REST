@@ -7,9 +7,7 @@ using OPAOWebService.Server.Models.Exceptions;
 
 namespace OPAOWebService.Server.Controllers
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class TaxController : ControllerBase
+    public class TaxController : ApiControllerBase
     {
         private readonly ITaxService _taxService;
         private readonly ILogger<TaxController> _logger;

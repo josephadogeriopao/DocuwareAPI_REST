@@ -10,9 +10,8 @@ using OPAOWebService.Server.Models.Exceptions;
 
 namespace OPAOWebService.Server.Controllers
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class LogController : ControllerBase
+
+    public class LogController : ApiControllerBase
     {
         private readonly ILogService _logService;
 
