@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.DataProtection;
 using OPAOWebService.Server.Infrastructure.Security.Interfaces;
+using OPAOWebService.Shared.Constants;
 using System.Security.Cryptography;
 
 namespace OPAOWebService.Server.Infrastructure.Security
@@ -26,7 +27,7 @@ namespace OPAOWebService.Server.Infrastructure.Security
         {
             // The "Purpose String" ensures that only this specific application 
             // can decrypt values encrypted with the same purpose.
-            _protector = provider.CreateProtector("OPAODataProtectionEncryption");
+            _protector = provider.CreateProtector(AppConfigConstants.EncryptionPurpose);
         }
 
         public ConfigProtector() { }

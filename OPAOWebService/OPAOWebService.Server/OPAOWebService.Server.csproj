@@ -43,4 +43,5 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+  <Import Project="..\OPAOWebService.Shared\OPAOWebService.Shared.projitems" Label="Shared" />
 </Project>

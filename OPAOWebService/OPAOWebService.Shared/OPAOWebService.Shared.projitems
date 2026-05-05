@@ -9,5 +9,6 @@
     <Import_RootNamespace>OPAOWebService.Shared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Constants\AppConfigConstants.cs" />
   </ItemGroup>
 </Project>

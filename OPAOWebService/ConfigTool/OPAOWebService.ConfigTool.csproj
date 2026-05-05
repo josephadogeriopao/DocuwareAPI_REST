@@ -18,4 +18,10 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.7" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\OPAOWebService.Server\OPAOWebService.Server.csproj" />
+  </ItemGroup>
+
+  <Import Project="..\OPAOWebService.Shared\OPAOWebService.Shared.projitems" Label="Shared" />
+
 </Project>

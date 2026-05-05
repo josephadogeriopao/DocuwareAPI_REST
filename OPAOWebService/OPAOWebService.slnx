@@ -3,7 +3,7 @@
     <Platform Name="Any CPU" />
     <Platform Name="x64" />
   </Configurations>
-  <Project Path="ConfigTool/ConfigTool.csproj">
+  <Project Path="ConfigTool/OPAOWebService.ConfigTool.csproj">
     <Platform Solution="*|x64" Project="x64" />
   </Project>
   <Project Path="opaowebservice.client/opaowebservice.client.esproj">
@@ -13,4 +13,5 @@
   <Project Path="OPAOWebService.Server/OPAOWebService.Server.csproj">
     <Platform Solution="*|x64" Project="x64" />
   </Project>
+  <Project Path="OPAOWebService.Shared/OPAOWebService.Shared.shproj" Id="ea8fd965-56fd-4dc9-b73e-31ab5b8bac1c" />
 </Solution>

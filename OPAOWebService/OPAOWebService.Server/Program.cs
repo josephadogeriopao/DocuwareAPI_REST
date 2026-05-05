@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.DataProtection;
 using OPAOWebService.Server.Data.Constants;
 using OPAOWebService.Server.Infrastructure.Extensions;
 using OPAOWebService.Server.Infrastructure.Helpers;
+using OPAOWebService.Shared.Constants;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using System.Diagnostics;
 using System.Drawing;
@@ -22,17 +23,20 @@ try
     DotNetEnv.Env.Load();
     builder.Configuration.AddEnvironmentVariables();
 
-    // Data Protection - Secure Sensitive Data
-    // 1. Get the path from appsettings.json (defaults to LocalApplicationData if missing)
-    var keyPath = builder.Configuration["DataProtection:KeyPath"]
-                  ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), ConfigConstants.DataProtectionKey);
+    // 1. Resolve the path
+    var keyPath = builder.Configuration[AppConfigConstants.DataProtectionConfigPath];
+                  // FIX: Use DefaultFolderName here to match the ConfigTool
+                  //?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), AppConfigConstants.DefaultFolderName);
+    Console.WriteLine($"key path ==> {keyPath}");
+    Debug.WriteLine($"key path ==> {keyPath}");
 
     // 2. Ensure the directory exists
     if (!Directory.Exists(keyPath)) Directory.CreateDirectory(keyPath);
 
-    // 3. Configure using the dynamic path
+    // 3. Configure Data Protection
     builder.Services.AddDataProtection()
-        .SetApplicationName("OPAOWebService")
+        // FIX: Use the shared constant for ApplicationName
+        .SetApplicationName(AppConfigConstants.ApplicationName)
         .PersistKeysToFileSystem(new DirectoryInfo(keyPath));
 
 
