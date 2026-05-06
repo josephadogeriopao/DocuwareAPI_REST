@@ -34,7 +34,7 @@ if (env != null)
     if (string.IsNullOrEmpty(keyPath))
     {
         if (env == AppConfigConstants.ProductionEnvironment)        // Change this to wherever your IIS server stores its keys!
-            keyPath = @"C:\Keys\OPAOWebService";
+            keyPath = AppConfigConstants.DefaultProdPath;
         else
             keyPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "ASP.NET", "OPAOWebService");
     }
