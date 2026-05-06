@@ -16,7 +16,7 @@ namespace OPAOWebService.Server.Infrastructure.Helpers
         public static void DisplayApplicationLogo()
         {
             // 1. Load the image and resize it (Console width is limited)
-            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "..", "assets", "seal.jpg"); 
+            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "assets", "seal.jpg");
             if (!File.Exists(path))
             {
                 Console.WriteLine("Logo file not found at: " + path);

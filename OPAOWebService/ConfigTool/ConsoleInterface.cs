@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.DataProtection;
+using OPAOWebService.Shared.Constants;
 
 namespace OPAOWebService.ConfigTool
 {
@@ -33,6 +34,43 @@ namespace OPAOWebService.ConfigTool
                         return;
                 }
             }
+        }
+
+        public static string selectEnvironmentPane()
+        {
+            string env = "";
+            while (true)
+            {
+                Console.Clear();
+                Console.WriteLine("=== OPAO Config Tool ===");
+                Console.WriteLine("1) Production");
+                Console.WriteLine("2) Development");
+                Console.WriteLine("X) Exit");
+                Console.Write("\nSelection: ");
+
+                string input = Console.ReadLine()?.ToUpper();
+
+                if (input == "1")
+                {
+                    env = AppConfigConstants.ProductionEnvironment;
+                    break;
+                }
+                if (input == "2")
+                {
+                    env = AppConfigConstants.DevelopmentionEnvironment;
+                    break;
+                }
+                if (input == "X")
+                {
+                    return null; // Closes the application
+                }
+
+                Console.WriteLine("Invalid selection. Press any key to try again...");
+                Console.ReadKey();
+            }
+            return env;
+
+
         }
     }
 }

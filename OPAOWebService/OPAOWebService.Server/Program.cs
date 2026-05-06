@@ -1,5 +1,6 @@
 
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.OpenApi;
 using OPAOWebService.Server.Data.Constants;
 using OPAOWebService.Server.Infrastructure.Extensions;
 using OPAOWebService.Server.Infrastructure.Helpers;
@@ -92,6 +93,7 @@ try
         {
             // Points to the definition we just created
             options.SwaggerEndpoint("/swagger/v1/swagger.json", "OPAOWebService v1");
+            // This adds the specific IIS URL to your "Servers" tab
 
             // Behavior matching the Pet Store API
             options.DocumentTitle = "OPAOWebService Documentation";
@@ -105,12 +107,14 @@ try
     app.UseDefaultFiles();
     app.UseStaticFiles();
 
-    app.MapFallbackToFile("index.html");
-
 
     app.UseHttpsRedirection();
-    app.UseAuthorization();
+    //app.UseAuthorization();
+    //app.UseAuthentication();
     app.MapControllers();
+
+    app.MapFallbackToFile("index.html");
+
     app.Run();
 }
 catch (Exception ex)

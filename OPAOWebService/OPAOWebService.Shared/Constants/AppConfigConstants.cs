@@ -17,5 +17,14 @@ namespace OPAOWebService.Shared.Constants
 
         // This is for the actual Windows Folder Name
         public const string DefaultFolderName = "OPAOWebService-Keys";
+
+        public const string ProductionEnvironment = "Production";
+
+        public const string DevelopmentionEnvironment = "Development";
+
+        // Default fallback (only used if nothing is found in Environment/JSON)
+        public const string DefaultProdPath = @"C:\Keys\OPAOWebService";
+
+
     }
 }
